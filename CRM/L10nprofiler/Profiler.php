@@ -17,6 +17,9 @@ use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
+
+  static $off = FALSE;
+
   /**
    * @return array
    */
@@ -37,14 +40,24 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
    * @param $original_string   string untranslated string
    * @param $translated_string string translated string
    * @param $locale            string locale used
+   * @param $domain            string domain used
    * @param $context           string context used
    */
-  public static function recordTranslationEvent($original_string, $translated_string, $locale, $context = 'civicrm') {
-    CRM_Core_DAO::executeQuery("INSERT INTO `l10nx_ts_captures` (timestamp, locale, context, original_hash, original, translation)
-                                      VALUES (NOW(), %1, %2, SHA1(%3), %3, %4);", [
+  public static function recordTranslationEvent($original_string, $translated_string, $locale, $domain = 'civicrm', $context = '') {
+    if ($domain === NULL) {
+      $domain = 'civicrm';
+    }
+
+    if ($context === NULL) {
+      $context = '';
+    }
+
+    CRM_Core_DAO::executeQuery("INSERT INTO `l10nx_ts_captures` (`timestamp`, `locale`, `context`, `domain`, `original_hash`, `original`, `translation`)
+                                      VALUES (NOW(), %1, %2, %5, SHA1(%3), %3, %4);", [
                                           1 => [$locale, 'String'],
                                           2 => [$context, 'String'],
                                           3 => [$original_string, 'String'],
+                                          5 => [$domain, 'String'],
                                           4 => [$translated_string, 'String']]);
   }
 
@@ -52,19 +65,23 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
   /**
    * Log the given translation
    *
-   * @param \Civi\Core\Event\GenericHookEvent $event the translation event
+   * @param \Civi\Core\Event\GenericHookEvent $ts_event the translation event
    *
    * @throws \API_Exception
    */
   public function processTranslation(\Civi\Core\Event\GenericHookEvent $ts_event) {
+    //if (self::$off) return;
+    //self::$off = TRUE;
 
     // TODO: check the filters, etc.
-    //
+
     self::recordTranslationEvent(
         $ts_event->original_text,
         $ts_event->translated_text,
         $ts_event->locale,
-        CRM_Utils_Array::value('context', $ts_event->params, 'civicrm'));
+        CRM_Utils_Array::value('domain',  $ts_event->params, 'civicrm'),
+        CRM_Utils_Array::value('context', $ts_event->params, ''));
+
   }
 
 }
