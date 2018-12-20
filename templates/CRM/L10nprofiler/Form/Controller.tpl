@@ -13,12 +13,18 @@
 +-------------------------------------------------------*}
 
 
-<div class="crm-section">
-  <div class="label">{$form.enabled.label}</div>
-  <div class="content">{$form.enabled.html}</div>
-  <div class="clear"></div>
-</div>
 
+{* Stats view *}
+<table class="crm-grid-table l10nx-stats">
+{foreach from=$stats item=stat}
+  <tr>
+    <td>{$stat.0}</td>
+    <td>{$stat.1}</td>
+  </tr>
+{/foreach}
+</table>
+
+{* Options *}
 <div class="crm-section">
   <div class="label">{$form.exclude_domains.label}</div>
   <div class="content">{$form.exclude_domains.html}</div>
@@ -32,5 +38,54 @@
 </div>
 
 <div class="crm-submit-buttons">
-{include file="CRM/common/formButtons.tpl" location="bottom"}
+{if $l10n_enabled}
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-refresh"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-refresh" name="l10n_refresh" value="{ts domain="de.systopia.l10nprofiler"}Refresh{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-power-off"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-power-off" name="l10n_disable" value="{ts domain="de.systopia.l10nprofiler"}Stop Profiling{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+{else}
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-signal"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-archive" name="l10n_enable" value="{ts domain="de.systopia.l10nprofiler"}Start Profiling{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-download"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-download" name="l10n_download_pot" value="{ts domain="de.systopia.l10nprofiler"}Create .POT{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-download"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-download" name="l10n_download_po" value="{ts domain="de.systopia.l10nprofiler"}Create .PO{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+  <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">
+    <i class="crm-i fa-eraser"></i>
+    <input class="crm-form-submit default validate" crm-icon="fa-eraser" name="l10n_clear" value="{ts domain="de.systopia.l10nprofiler"}Clear{/ts}" type="submit" onclick="l10nx_processButton(event, this);">
+  </span>
+{/if}
+
 </div>
+
+{$form.l10n_action.html}
+
+{*<div class="crm-submit-buttons">
+{include file="CRM/common/formButtons.tpl" location="bottom"}
+</div>*}
+
+{literal}
+<script type="application/javascript">
+
+  /**
+   * Custom button handler
+   * @param event
+   */
+  function l10nx_processButton(event, button) {
+    let action = cj(button).attr('name');
+    cj("input[name=l10n_action]").val(action);
+    // event.preventDefault();
+  }
+
+</script>
+{/literal}

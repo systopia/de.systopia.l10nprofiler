@@ -16,9 +16,9 @@
 use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
+use CRM_L10nprofiler_ExtensionUtil as E;
 
-  static $off = FALSE;
+class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
 
   /**
    * @return array
@@ -44,12 +44,12 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
    * @param $context           string context used
    */
   public static function recordTranslationEvent($original_string, $translated_string, $locale, $domain = 'civicrm', $context = '') {
-    if ($domain === NULL) {
+    if (empty($domain)) {
       $domain = 'civicrm';
     }
 
-    if ($context === NULL) {
-      $context = '';
+    if (empty($context)) {
+      $context = 'None';
     }
 
     CRM_Core_DAO::executeQuery("INSERT INTO `l10nx_ts_captures` (`timestamp`, `locale`, `context`, `domain`, `original_hash`, `original`, `translation`)
@@ -70,10 +70,7 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
    * @throws \API_Exception
    */
   public function processTranslation(\Civi\Core\Event\GenericHookEvent $ts_event) {
-    //if (self::$off) return;
-    //self::$off = TRUE;
-
-    // TODO: check the filters, etc.
+    // TODO: evaluate the filters, etc.
 
     self::recordTranslationEvent(
         $ts_event->original_text,
@@ -84,4 +81,35 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
 
   }
 
+  /**
+   * Calculate the stats of the currently captured data
+   *
+   * @return array various statistics
+   */
+  public static function calculateStats() {
+    $query = CRM_Core_DAO::executeQuery("
+      SELECT
+        COUNT(*)                                      AS total_count,
+        COUNT(DISTINCT(original))                     AS original_count,
+        COUNT(DISTINCT(domain))                       AS domain_count,
+        GROUP_CONCAT(DISTINCT domain SEPARATOR ', ')  AS domain_list,
+        COUNT(DISTINCT(locale))                       AS locale_count,
+        GROUP_CONCAT(DISTINCT locale SEPARATOR ', ')  AS locale_list,
+        COUNT(DISTINCT(context))                      AS context_count,
+        GROUP_CONCAT(DISTINCT context SEPARATOR ', ') AS context_list,
+        MIN(timestamp)                                AS timestamp_start,
+        MAX(timestamp)                                AS timestamp_end
+      FROM l10nx_ts_captures;");
+    $query->fetch();
+
+    return [
+        'total_count'     => [E::ts("Total Translations"), $query->total_count],
+        'original_count'  => [E::ts("Different Strings"), $query->original_count],
+        'domain_list'     => [E::ts("Domains"), $query->domain_list],
+        'locale_list'     => [E::ts("Locales"), $query->locale_list],
+        'context_list'    => [E::ts("Contexts"), $query->context_list],
+        'timestamp_start' => [E::ts("First Event"), $query->timestamp_start ? date("H:i:s (Y-m-d)", strtotime($query->timestamp_start)) : ''],
+        'timestamp_end'   => [E::ts("First Event"), $query->timestamp_end ? date("H:i:s (Y-m-d)", strtotime($query->timestamp_end)) : ''],
+    ];
+  }
 }

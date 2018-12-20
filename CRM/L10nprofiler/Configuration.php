@@ -13,15 +13,98 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use CRM_L10nprofiler_ExtensionUtil as E;
+
 class CRM_L10nprofiler_Configuration {
+
+  /**
+   * @var array configuration data
+   */
+  protected static $_configuration = NULL;
+
+  /**
+   * get the whole configuration blob
+   *
+   * @return array
+   */
+  public static function getConfiguration() {
+    if (self::$_configuration === NULL) {
+      self::$_configuration = CRM_Core_BAO_Setting::getItem(E::LONG_NAME, 'l10n_profiler_settings');
+      if (self::$_configuration === NULL) {
+        // new here? Set some sensible defaults
+        self::$_configuration = [
+            'enabled'         => 0,
+            'exclude_domains' => E::LONG_NAME,
+            'locales'         => [CRM_Core_I18n::getLocale()],
+        ];
+      }
+    }
+    return self::$_configuration;
+  }
+
+  /**
+   * Set the whole configuration blob
+   *
+   * @param $configuration array the whole configuration
+   */
+  public static function setConfiguration($configuration) {
+    self::$_configuration = $configuration;
+    self::storeConfiguration();
+  }
+
+  /**
+   * Set the whole configuration blob
+   *
+   * @param $configuration array the whole configuration
+   */
+  public static function storeConfiguration() {
+    CRM_Core_BAO_Setting::setItem(self::$_configuration, E::LONG_NAME, 'l10n_profiler_settings');
+  }
+
+  /**
+   * Get a single setting's value
+   *
+   * @param $name    string setting name/key
+   * @param $default mixed  default, if setting is not defined
+   * @return mixed setting's value
+   */
+  public static function getSetting($name, $default = NULL) {
+    $settings = self::getConfiguration();
+    return CRM_Utils_Array::value($name, $settings, $default);
+  }
+
+  /**
+   * Get a single setting's value
+   *
+   * @param $name    string setting name/key
+   * @param $value   mixed  new value
+   * @return mixed setting's value
+   */
+  public static function setSetting($name, $value) {
+    $settings = self::getConfiguration();
+    $settings[$name] = $value;
+    self::setConfiguration($settings);
+  }
+
+  /**
+   * Check if profiling is currently enabled
+   *
+   * @return bool enabled
+   */
+  public static function profilingEnabled() {
+    return (bool) self::getSetting('enabled', FALSE);
+  }
+
+
 
   /**
    * This function subscribes to l10nx's ts_ost and dts_post events
    *  if the profiling is enabled.
    */
   public static function subscribeToEvents() {
-    // TODO: implement configuration
-    \Civi::dispatcher()->addSubscriber(new CRM_L10nprofiler_Profiler());
+    if (CRM_L10nprofiler_Configuration::profilingEnabled()) {
+      \Civi::dispatcher()->addSubscriber(new CRM_L10nprofiler_Profiler());
+    }
   }
 
   /**

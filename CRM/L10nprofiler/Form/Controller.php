@@ -22,14 +22,17 @@ use CRM_L10nprofiler_ExtensionUtil as E;
  */
 class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
 
-  public function buildQuickForm() {
-    // add form elements
-    $this->add(
-        'checkbox',
-        'enabled',
-        E::ts("Capturing Enabled?")
-    );
+  /**
+   * @var string stores requested action, if any
+   */
+  protected $l10n_action = NULL;
 
+
+  public function buildQuickForm() {
+    CRM_Utils_System::setTitle(E::ts("Translation Event Captures"));
+    $this->executeAction();
+
+    // add form elements
     $this->add(
         'text',
         'exclude_domains',
@@ -56,19 +59,17 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
       ],
     ));
 
+    // form workflow
+    $this->add('hidden', 'l10n_action');
+    $this->add('hidden', 'enabled');
+
     // set current values as default
-    $current_values = CRM_Core_BAO_Setting::getItem(E::LONG_NAME, 'l10n_profiler_settings');
-    if ($current_values === NULL) {
-      // new here? Set some defaults
-      $current_values = [
-          'exclude_domains' => E::LONG_NAME,
-          'locales'         => [CRM_Core_I18n::getLocale()],
-      ];
-    }
+    $current_values = CRM_L10nprofiler_Configuration::getConfiguration();
     $this->setDefaults($current_values);
+    $this->assign('l10n_enabled', CRM_Utils_Array::value('enabled', $current_values, 0));
 
     // calculate stats
-    $stats = self::calculateStats();
+    $stats = CRM_L10nprofiler_Profiler::calculateStats();
     $this->assign('stats', $stats);
 
     parent::buildQuickForm();
@@ -76,26 +77,42 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
 
   public function postProcess() {
     $values = $this->exportValues();
-    CRM_Core_BAO_Setting::setItem($values, E::LONG_NAME, 'l10n_profiler_settings');
+    CRM_Core_Error::debug_log_message("Action: " . $values['l10n_action']);
+
+    $values['enabled'] = CRM_L10nprofiler_Configuration::getSetting('enabled');
+    CRM_L10nprofiler_Configuration::setConfiguration($values);
     parent::postProcess();
   }
 
   /**
-   * Calculate the stats of the currently captured data
-   *
-   * @return array various statistics
+   * Execute any action submitted
    */
-  public static function calculateStats() {
-    $query = CRM_Core_DAO::executeQuery("
-      SELECT
-        COUNT(*)                  AS total_count,
-        COUNT(DISTINCT(original)) AS original_count,
-        COUNT(DISTINCT(domain))   AS domain_count,
-        COUNT(DISTINCT(locale))   AS locale_count,
-        COUNT(DISTINCT(context))  AS context_count
-      FROM l10nx_ts_captures;");
-    $query->fetch();
+  protected function executeAction() {
+    $this->l10n_action = CRM_Utils_Request::retrieve('l10n_action', 'String');
+    switch ($this->l10n_action) {
+      case 'l10n_refresh':
+        // nothing to do
+        break;
 
-    return [];
+      case 'l10n_clear':
+        // clear capture DB
+        CRM_Core_DAO::executeQuery("TRUNCATE l10nx_ts_captures;");
+        break;
+
+      case 'l10n_enable':
+        // clear capture DB
+        CRM_L10nprofiler_Configuration::setSetting('enabled', 1);
+        break;
+
+      case 'l10n_disable':
+        // clear capture DB
+        CRM_L10nprofiler_Configuration::setSetting('enabled', 0);
+        break;
+
+
+      default:
+        CRM_Core_Session::setStatus(E::ts("Unknown action '%1'", [1 => $this->l10n_action]));
+        break;
+    }
   }
 }
