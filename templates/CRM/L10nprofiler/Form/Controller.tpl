@@ -12,9 +12,19 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
-
+{literal}
+<style>
+  div.l10nx-stats-div {
+    margin: 10px;
+    border: 2px solid #a1a1a1;
+    padding: 0px 10px;
+    border-radius:15px;
+  }
+</style>
+{/literal}
 
 {* Stats view *}
+<div class="l10nx-stats-div">
 <table class="crm-grid-table l10nx-stats">
 {foreach from=$stats item=stat}
   <tr>
@@ -23,20 +33,30 @@
   </tr>
 {/foreach}
 </table>
+</div>
 
 {* Options *}
+<br/>
+<h3>{ts domain="de.systopia.l10nprofiler"}Filters{/ts}</h3>
 <div class="crm-section">
-  <div class="label">{$form.exclude_domains.label}</div>
-  <div class="content">{$form.exclude_domains.html}</div>
+  <div class="label">{$form.exclude_domains.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.l10nprofiler"}Exclude Domains{/ts}", {literal}{"id":"id-domain-exclude","file":"CRM\/L10nprofiler\/Form\/Controller"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.l10nprofiler"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+  <div class="content">#{$form.exclude_domains.html}#</div>
   <div class="clear"></div>
 </div>
 
 <div class="crm-section">
-  <div class="label">{$form.locales.label}</div>
+  <div class="label">{$form.restrict_domains.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.l10nprofiler"}Restrict to Domains{/ts}", {literal}{"id":"id-domain-restrict","file":"CRM\/L10nprofiler\/Form\/Controller"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.l10nprofiler"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+  <div class="content">#{$form.restrict_domains.html}#</div>
+  <div class="clear"></div>
+</div>
+
+<div class="crm-section">
+  <div class="label">{$form.locales.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.l10nprofiler"}Locale{/ts}", {literal}{"id":"id-locale","file":"CRM\/L10nprofiler\/Form\/Controller"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.l10nprofiler"}Help{/ts}" class="helpicon">&nbsp;</a></div>
   <div class="content">{$form.locales.html}</div>
   <div class="clear"></div>
 </div>
 
+<br/>
 <div class="crm-submit-buttons">
 {if $l10n_enabled}
   <span class="crm-button crm-button-type-submit crm-button_qf_Controller_submit crm-i-button">

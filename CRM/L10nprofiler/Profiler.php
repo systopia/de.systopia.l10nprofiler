@@ -44,10 +44,6 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
    * @param $context           string context used
    */
   public static function recordTranslationEvent($original_string, $translated_string, $locale, $domain = 'civicrm', $context = '') {
-    if (empty($domain)) {
-      $domain = 'civicrm';
-    }
-
     if (empty($context)) {
       $context = 'None';
     }
@@ -70,14 +66,49 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
    * @throws \API_Exception
    */
   public function processTranslation(\Civi\Core\Event\GenericHookEvent $ts_event) {
-    // TODO: evaluate the filters, etc.
+    // get some data
+    $context = CRM_Utils_Array::value('context', $ts_event->params, '');
+    $domain = CRM_Utils_Array::value('domain',  $ts_event->params, 'civicrm');
+    if (is_array($domain)) {
+      $domain = reset($domain);
+    }
+    if (empty($domain)) {
+      $domain = 'civicrm';
+    }
 
+
+    // evaluate filters
+    $only_locales = CRM_L10nprofiler_Configuration::getSetting('locales');
+    if (!empty($only_locales)) {
+      $locale = $ts_event->locale;
+      if (!in_array($locale, $only_locales)) {
+        return;
+      }
+    }
+
+    $restrict_domains = CRM_L10nprofiler_Configuration::getSetting('restrict_domains');
+    if (!empty($restrict_domains)) {
+      // only record the given domains
+      if (!preg_match("#{$restrict_domains}#", $domain)) {
+        return;
+      }
+    }
+
+    $exclude_domains = CRM_L10nprofiler_Configuration::getSetting('exclude_domains');
+    if (!empty($exclude_domains)) {
+      // only record the given domains
+      if (preg_match("#{$exclude_domains}#", $domain)) {
+        return;
+      }
+    }
+
+    // all good? record event!
     self::recordTranslationEvent(
         $ts_event->original_text,
         $ts_event->translated_text,
         $ts_event->locale,
-        CRM_Utils_Array::value('domain',  $ts_event->params, 'civicrm'),
-        CRM_Utils_Array::value('context', $ts_event->params, ''));
+        $domain,
+        $context);
 
   }
 

@@ -43,6 +43,15 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
     );
 
     $this->add(
+        'text',
+        'restrict_domains',
+        E::ts('Only Domains'),
+        ['class' => 'huge'],
+        FALSE
+
+    );
+
+    $this->add(
       'select',
       'locales',
       E::ts('Restrict to Locale(s)'),
@@ -77,8 +86,6 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
 
   public function postProcess() {
     $values = $this->exportValues();
-    CRM_Core_Error::debug_log_message("Action: " . $values['l10n_action']);
-
     $values['enabled'] = CRM_L10nprofiler_Configuration::getSetting('enabled');
     CRM_L10nprofiler_Configuration::setConfiguration($values);
     parent::postProcess();
@@ -109,6 +116,10 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
         CRM_L10nprofiler_Configuration::setSetting('enabled', 0);
         break;
 
+      case '':
+      case NULL:
+        // no action
+        break;
 
       default:
         CRM_Core_Session::setStatus(E::ts("Unknown action '%1'", [1 => $this->l10n_action]));
