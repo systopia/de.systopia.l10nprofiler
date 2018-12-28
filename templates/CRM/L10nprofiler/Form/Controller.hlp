@@ -14,10 +14,12 @@
 
 {htxt id='id-domain-exclude'}
   <p>{ts domain="de.systopia.l10nprofiler"}Provide a regular expression of the domains to be excluded.{/ts}</p>
+  <p>{ts domain="de.systopia.l10nprofiler"}You can simply write a string that it should <i>not</i> contain, but for a better understanding how these regular expressions work, see <a href="https://secure.php.net/manual/en/book.pcre.php">HERE</a>{/ts}</p>
 {/htxt}
 
 {htxt id='id-domain-restrict'}
-  <p>{ts domain="de.systopia.l10nprofiler"}Provide a regular expression to restrict the recorded domain to.{/ts}</p>
+  <p>{ts domain="de.systopia.l10nprofiler"}Provide a PCRE regular expression to restrict the recorded domain to.{/ts}</p>
+  <p>{ts domain="de.systopia.l10nprofiler"}You can simply write a string that it should contain, but for a better understanding how these regular expressions work, see <a href="https://secure.php.net/manual/en/book.pcre.php">HERE</a>{/ts}</p>
 {/htxt}
 
 {htxt id='id-locale'}
