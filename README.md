@@ -1,13 +1,13 @@
 # Localisation Profiler Extension
 
-![Screenshot](/images/screenshot.png)
-
 This extension allows you to live-capture ongoing translations and 
 export those as .PO and .POT files, so you can easily create 
 or amend the existing translation with your own.
 
 After translation, you can inject the resulting .MO file using 
 SYSTOPIA's [Custom MO extension](https://github.com/systopia/de.systopia.l10nmo). 
+
+![Screenshot](/images/screenshot.png)
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
