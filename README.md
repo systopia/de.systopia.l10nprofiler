@@ -1,44 +1,18 @@
-# de.systopia.l10nprofiler
+# Localisation Profiler Extension
 
 ![Screenshot](/images/screenshot.png)
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+This extension allows you to live-capture ongoing translations and 
+export those as .PO and .POT files, so you can easily create 
+or amend the existing translation with your own.
+
+After translation, you can inject the resulting .MO file using 
+SYSTOPIA's [Custom MO extension](https://github.com/systopia/de.systopia.l10nmo). 
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
-* PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
-
-## Installation (Web UI)
-
-This extension has not yet been published for installation via the web UI.
-
-## Installation (CLI, Zip)
-
-Sysadmins and developers may download the `.zip` file for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-cd <extension-dir>
-cv dl de.systopia.l10nprofiler@https://github.com/FIXME/de.systopia.l10nprofiler/archive/master.zip
-```
-
-## Installation (CLI, Git)
-
-Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) repo for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-git clone https://github.com/FIXME/de.systopia.l10nprofiler.git
-cv en l10nprofiler
-```
-
-## Usage
-
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
-
-## Known Issues
-
-(* FIXME *)
+* [l10nx Extension](https://github.com/systopia/org.civicrm.l10nx)
+* PHP v5.6+
+* CiviCRM 5.5+
