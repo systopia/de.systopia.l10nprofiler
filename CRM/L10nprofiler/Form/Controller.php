@@ -39,7 +39,6 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
         E::ts('Exclude Domains'),
         ['class' => 'huge'],
         FALSE
-
     );
 
     $this->add(
@@ -48,7 +47,6 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
         E::ts('Only Domains'),
         ['class' => 'huge'],
         FALSE
-
     );
 
     $this->add(
@@ -59,6 +57,13 @@ class CRM_L10nprofiler_Form_Controller extends CRM_Core_Form {
       FALSE,
       ['class' => 'crm-select2', 'multiple' => 'multiple']
     );
+
+    $this->add(
+        'checkbox',
+        'untranslated_only',
+        E::ts('Only untranslated strings')
+    );
+
 
     $this->addButtons(array(
       [

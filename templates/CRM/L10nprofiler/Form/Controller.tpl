@@ -56,6 +56,12 @@
   <div class="clear"></div>
 </div>
 
+<div class="crm-section">
+  <div class="label">{$form.untranslated_only.label}&nbsp;<a onclick='CRM.help("{ts domain="de.systopia.l10nprofiler"}Untranslated Only{/ts}", {literal}{"id":"id-untranslated","file":"CRM\/L10nprofiler\/Form\/Controller"}{/literal}); return false;' href="#" title="{ts domain="de.systopia.l10nprofiler"}Help{/ts}" class="helpicon">&nbsp;</a></div>
+  <div class="content">{$form.untranslated_only.html}</div>
+  <div class="clear"></div>
+</div>
+
 <br/>
 <div class="crm-submit-buttons">
 {if $l10n_enabled}

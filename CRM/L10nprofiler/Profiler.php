@@ -78,6 +78,13 @@ class CRM_L10nprofiler_Profiler implements EventSubscriberInterface {
 
 
     // evaluate filters
+    $untranslated_only = CRM_L10nprofiler_Configuration::getSetting('untranslated_only');
+    if ($untranslated_only) {
+      if ($ts_event->original_text != $ts_event->translated_text) {
+        return;
+      }
+    }
+
     $only_locales = CRM_L10nprofiler_Configuration::getSetting('locales');
     if (!empty($only_locales)) {
       $locale = $ts_event->locale;

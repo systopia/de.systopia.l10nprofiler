@@ -25,3 +25,7 @@
 {htxt id='id-locale'}
   <p>{ts domain="de.systopia.l10nprofiler"}Select the locales (languages) to be captured. Leave empty for 'all'.{/ts}</p>
 {/htxt}
+
+{htxt id='id-untranslated'}
+  <p>{ts domain="de.systopia.l10nprofiler"}Only strings that have not been changed by translation.{/ts}</p>
+{/htxt}

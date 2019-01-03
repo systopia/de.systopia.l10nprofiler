@@ -157,12 +157,12 @@ function l10nprofiler_civicrm_entityTypes(&$entityTypes) {
  */
 function l10nprofiler_civicrm_navigationMenu(&$menu) {
   _l10nprofiler_civix_insert_navigation_menu($menu, 'Administer/Localization', array(
-      'label' => E::ts('Translation Profiling'),
-      'name' => 'l10n_profiler',
-      'url' => 'civicrm/l10nx/profiler',
+      'label'      => E::ts('Translation Profiling'),
+      'name'       => 'l10n_profiler',
+      'url'        => 'civicrm/l10nx/profiler',
       'permission' => 'administer CiviCRM',
-      'operator' => 'OR',
-      'separator' => 0,
+      'operator'   => 'OR',
+      'separator'  => 0,
   ));
-  _l10nmo_civix_navigationMenu($menu);
+  _l10nprofiler_civix_navigationMenu($menu);
 }
