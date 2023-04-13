@@ -19,7 +19,7 @@ use CRM_L10nprofiler_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_L10nprofiler_Upgrader extends CRM_L10nprofiler_Upgrader_Base {
+class CRM_L10nprofiler_Upgrader extends CRM_Extension_Upgrader_Base {
 
   /**
    * Create data structure
